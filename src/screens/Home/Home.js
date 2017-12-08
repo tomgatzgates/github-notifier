@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Page, Layout, Card, Button, List, DisplayText, Heading, FooterHelp, Tabs, ResourceList, Icon} from '@shopify/polaris';
+import {Page, Layout, Card, Button, Link, List, DisplayText, Heading, FooterHelp, Tabs, ResourceList, Icon} from '@shopify/polaris';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as TokenActions from "actions/token";
