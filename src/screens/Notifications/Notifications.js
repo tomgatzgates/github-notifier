@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as NotificationActions from "actions/notifications";
 import {
   Page,
   Layout,
@@ -7,6 +9,7 @@ import {
   Button,
   Link,
   List,
+  Icon,
   DisplayText,
   Heading,
   FooterHelp,
@@ -34,36 +37,25 @@ class Notifications extends Component {
 
     this.state = {
       tabIndex: 0,
-      notifications: [],
     }
   }
 
   componentDidMount() {
-    this.api
+    if(!this.props.notifications.length) {
+      this.api
       .get("/notifications")
       .then(response => {
         console.log(response);
-        this.setState({notifications: response.data})
+        this.props.saveNotifications(response.data)
       })
       .catch(function(error) {
         console.log(error);
       });
-  }
-
-  parseNotifications(data) {
-    let issues;
-    let pullRequests;
-    let repositories;
-    let notifications;
-
-    data.each(i => {
-
-    });
-    this.setState({notifications})
+    }
   }
 
   filterItems(tab) {
-    const { notifications } = this.state;
+    const { notifications } = this.props;
     return notifications.filter(n => {
       if (!FILTERS[tab]) {
         return true
@@ -73,18 +65,31 @@ class Notifications extends Component {
     });
   }
 
+  renderIssue (issue){
+    return {
+      url: issue.subject.latest_comment_url,
+      media: <Icon source="alert" />,
+      attributeOne: issue.subject.title,
+      actions: [{content: 'View listing'}],
+      persistActions: true,
+      //"#139801 opened 16 hours ago by jgodson ",
+      // badges: [{ content: "Assigned" }],
+    };
+  }
+  renderPullRequest(pullRequest){
+    return {
+      url: pullRequest.subject.latest_comment_url,
+      media: <Icon source="embed" />,
+      attributeOne: pullRequest.subject.title,
+      //"#139801 opened 16 hours ago by jgodson ",
+      // badges: [{ content: "Assigned" }],
+    };
+  }
   renderPanel(tabId) {
     const items = this.filterItems(tabId).map(n => {
-      return {
-        url: n.subject.lastest_comment_url,
-        media: <Thumbnail
-          source={n.repository.owner.avatar_url}
-          alt="Black choker necklace"
-        />,
-        attributeOne: n.subject.title,
-        // attributeTwo: "#139801 opened 16 hours ago by jgodson ",
-        // badges: [{ content: "Assigned" }],
-      };
+      return n.subject.type === 'Issue'
+        ? this.renderIssue(n)
+        : this.renderPullRequest(n);
     });
 
     return(
@@ -109,11 +114,14 @@ class Notifications extends Component {
         <Tabs fitted selected={tabIndex} tabs={tabs} onSelect={tabIndex => this.setState({ tabIndex })} />
 
         <Tabs.Panel id={tabs[tabIndex].panelId}>
-          { !!this.state.notifications.length && this.renderPanel(tabs[tabIndex].id) }
+          { !!this.props.notifications.length && this.renderPanel(tabs[tabIndex].id) }
         </Tabs.Panel>
       </Page>
     );
   }
 }
 
-export default connect(({ token }) => ({ token }))(Notifications);
+export default connect(
+  ({ token, notifications }) => ({ token, notifications }),
+  (dispatch) => bindActionCreators(NotificationActions, dispatch)
+)(Notifications);

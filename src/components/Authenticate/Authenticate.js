@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import {Card} from '@shopify/polaris';
+import {Card,TextField} from '@shopify/polaris';
 
 class Authenticate extends Component {
   state = {
     token: '',
   }
 
-  handleChange = (event) => {
-    this.setState({token: event.target.value});
+  handleChange = (value) => {
+    this.setState({token: value});
   }
 
   render() {
@@ -21,7 +21,7 @@ class Authenticate extends Component {
           <p>
             We need access to your Github profile to see issues and repositories
           </p>
-          <input type="text" value={token} onChange={this.handleChange}/>
+          <TextField label="Token" value={token} onChange={this.handleChange}/>
         </Card.Section>
       </Card>
     );
