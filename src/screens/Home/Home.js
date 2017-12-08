@@ -6,8 +6,6 @@ import * as TokenActions from "actions/token";
 
 import Authenticate from 'components/Authenticate/Authenticate';
 
-
-
 class Home extends Component {
   handleAuth = (token) => {
     this.props.authenticate(token);
