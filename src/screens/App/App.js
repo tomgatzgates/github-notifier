@@ -4,6 +4,7 @@ import axios from "axios";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import Home from 'screens/Home/Home';
+import Notifications from "screens/Notifications/Notifications";
 
 class App extends Component {
   constructor(props) {
@@ -41,8 +42,11 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
-        <Route exact path="/" component={Home} />
+     <Router>
+        <div>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/notifications" component={Notifications} />
+        </div>
       </Router>
     );
   }
